@@ -1,6 +1,6 @@
 ﻿namespace cslox;
 
-class Lox
+public class Lox
 {
     private static bool hadError = false;
 
@@ -21,7 +21,7 @@ class Lox
         }
     }
 
-    private static void RunPrompt()
+    public static void RunPrompt()
     {
         using StreamReader reader = new(Console.OpenStandardInput());
 
@@ -35,7 +35,7 @@ class Lox
         }
     }
 
-    private static void RunFile(string path)
+    public static void RunFile(string path)
     {
         byte[] bytes = File.ReadAllBytes(path);
         Run(System.Text.Encoding.Default.GetString(bytes));
@@ -44,7 +44,7 @@ class Lox
 
 
 
-    private static void Run(string source)
+    public static void Run(string source)
     {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.ScanTokens();
@@ -55,7 +55,7 @@ class Lox
         }
     }
 
-    private static void Error(int line, string message)
+    public static void Error(int line, string message)
     {
         Report(line, "", message);
     }
