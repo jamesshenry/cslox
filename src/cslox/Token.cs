@@ -6,6 +6,7 @@ class Token
     readonly string lexeme;
     readonly object? literal;
     readonly int line;
+
     public Token(TokenType type, string lexeme, object? literal, int line)
     {
         this.type = type;

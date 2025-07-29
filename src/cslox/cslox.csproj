@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <AssemblyName>cslox</AssemblyName>
     <RootNamespaces>cslox</RootNamespaces>
@@ -10,5 +9,4 @@
     <PublishAot>true</PublishAot>
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
-
 </Project>

@@ -29,7 +29,8 @@ public class Lox
         {
             Console.Out.Write("> ");
             string? line = reader.ReadLine();
-            if (line == null) break;
+            if (line == null)
+                break;
             Run(line);
             hadError = false;
         }
@@ -39,10 +40,9 @@ public class Lox
     {
         byte[] bytes = File.ReadAllBytes(path);
         Run(System.Text.Encoding.Default.GetString(bytes));
-        if (hadError) Environment.Exit(65);
+        if (hadError)
+            Environment.Exit(65);
     }
-
-
 
     public static void Run(string source)
     {

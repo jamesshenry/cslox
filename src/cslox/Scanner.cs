@@ -35,7 +35,6 @@ public class Scanner
         this.source = source;
     }
 
-
     internal List<Token> ScanTokens()
     {
         while (!IsAtEnd())
@@ -47,29 +46,59 @@ public class Scanner
         tokens.Add(new Token(EOF, "", null, line));
         return tokens;
     }
+
     private void ScanToken()
     {
         char c = Advance();
         switch (c)
         {
-            case '(': AddToken(LEFT_PAREN); break;
-            case ')': AddToken(RIGHT_PAREN); break;
-            case '{': AddToken(LEFT_BRACE); break;
-            case '}': AddToken(RIGHT_BRACE); break;
-            case ',': AddToken(COMMA); break;
-            case '.': AddToken(DOT); break;
-            case '-': AddToken(MINUS); break;
-            case '+': AddToken(PLUS); break;
-            case ';': AddToken(SEMICOLON); break;
-            case '*': AddToken(STAR); break;
-            case '!': AddToken(Match('=') ? BANG_EQUAL : BANG); break;
-            case '=': AddToken(Match('=') ? EQUAL_EQUAL : EQUAL); break;
-            case '<': AddToken(Match('=') ? LESS_EQUAL : LESS); break;
-            case '>': AddToken(Match('=') ? GREATER_EQUAL : GREATER); break;
+            case '(':
+                AddToken(LEFT_PAREN);
+                break;
+            case ')':
+                AddToken(RIGHT_PAREN);
+                break;
+            case '{':
+                AddToken(LEFT_BRACE);
+                break;
+            case '}':
+                AddToken(RIGHT_BRACE);
+                break;
+            case ',':
+                AddToken(COMMA);
+                break;
+            case '.':
+                AddToken(DOT);
+                break;
+            case '-':
+                AddToken(MINUS);
+                break;
+            case '+':
+                AddToken(PLUS);
+                break;
+            case ';':
+                AddToken(SEMICOLON);
+                break;
+            case '*':
+                AddToken(STAR);
+                break;
+            case '!':
+                AddToken(Match('=') ? BANG_EQUAL : BANG);
+                break;
+            case '=':
+                AddToken(Match('=') ? EQUAL_EQUAL : EQUAL);
+                break;
+            case '<':
+                AddToken(Match('=') ? LESS_EQUAL : LESS);
+                break;
+            case '>':
+                AddToken(Match('=') ? GREATER_EQUAL : GREATER);
+                break;
             case '/':
                 if (Match('/'))
                 {
-                    while (Peek() != '\n' && !IsAtEnd()) Advance();
+                    while (Peek() != '\n' && !IsAtEnd())
+                        Advance();
                 }
                 else
                 {
@@ -84,7 +113,9 @@ public class Scanner
             case '\n':
                 line++;
                 break;
-            case '"': ParseString(); break;
+            case '"':
+                ParseString();
+                break;
 
             default:
                 if (char.IsDigit(c))
@@ -112,7 +143,8 @@ public class Scanner
     {
         while (Peek() != '"' && !IsAtEnd())
         {
-            if (Peek() == '\n') line++;
+            if (Peek() == '\n')
+                line++;
             Advance();
         }
         if (IsAtEnd())
@@ -129,13 +161,15 @@ public class Scanner
 
     private void ParseNumber()
     {
-        while (char.IsDigit(Peek())) Advance();
+        while (char.IsDigit(Peek()))
+            Advance();
 
         if (Peek() == '.' && char.IsDigit(PeekNext()))
         {
             Advance();
 
-            while (char.IsDigit(Peek())) Advance();
+            while (char.IsDigit(Peek()))
+                Advance();
         }
 
         AddToken(NUMBER, double.Parse(source[start..current]));
@@ -143,7 +177,8 @@ public class Scanner
 
     private void ParseIdentifier()
     {
-        while (IsAlphaNumeric(Peek())) Advance();
+        while (IsAlphaNumeric(Peek()))
+            Advance();
 
         string text = source.Substring(start, current - start);
 
@@ -154,19 +189,25 @@ public class Scanner
     }
 
     private char Peek() => IsAtEnd() ? '\0' : source[current];
+
     private char PeekNext() => current + 1 >= source.Length ? '\0' : source[current + 1];
+
     private bool IsAtEnd() => current >= source.Length;
+
     private char Advance() => source[current++];
 
     private bool Match(char expected)
     {
-        if (IsAtEnd()) return false;
-        if (source[current] != expected) return false;
+        if (IsAtEnd())
+            return false;
+        if (source[current] != expected)
+            return false;
 
         current++;
         return true;
     }
 
     private static bool IsAlpha(char c) => char.IsAsciiLetter(c) || c == '_';
+
     private static bool IsAlphaNumeric(char c) => IsAlpha(c) || char.IsAsciiDigit(c);
 }
