@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/cslox.tests/cslox.tests.csproj" />
+    <Project Path="src/cslox/cslox.csproj" />
+  </Folder>
+</Solution>

@@ -11,8 +11,8 @@ public class ScannerTests
 (( )){} // grouping stuff
 !*+-/=<> <= == // operators
 """;
-
     }
+
     [Fact]
     public void Test1()
     {
