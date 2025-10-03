@@ -1,6 +1,6 @@
 namespace cslox;
 
-enum TokenType
+public enum TokenType
 {
     // Signle-character tokens
     LEFT_PAREN,
