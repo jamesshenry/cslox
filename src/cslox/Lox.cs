@@ -6,19 +6,26 @@ public class Lox
 
     static void Main(string[] args)
     {
-        if (args.Length > 1)
-        {
-            Console.WriteLine("Usage: cslox [script]");
-            Environment.Exit(64);
-        }
-        else if (args.Length == 1)
-        {
-            RunFile(args[0]);
-        }
-        else
-        {
-            RunPrompt();
-        }
+        // if (args.Length > 1)
+        // {
+        //     Console.WriteLine("Usage: cslox [script]");
+        //     Environment.Exit(64);
+        // }
+        // else if (args.Length == 1)
+        // {
+        //     RunFile(args[0]);
+        // }
+        // else
+        // {
+        //     RunPrompt();
+        // }
+        Expr expression = new Expr.Binary(
+            new Expr.Unary(new Token(TokenType.MINUS, "-", null, 1), new Expr.Literal(123)),
+            new Token(TokenType.STAR, "*", null, 1),
+            new Expr.Grouping(new Expr.Literal("str"))
+        );
+
+        Console.WriteLine(new RpnPrinter().Print(expression));
     }
 
     public static void RunPrompt()
