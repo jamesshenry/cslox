@@ -1,0 +1,149 @@
+using System.Linq.Expressions;
+using System.Text.RegularExpressions;
+using static cslox.TokenType;
+
+namespace cslox;
+
+public class Parser
+{
+    List<Token> _tokens = [];
+    int _current = 0;
+
+    public Parser(List<Token> tokens)
+    {
+        _tokens = tokens;
+    }
+
+    // expression -> equality;
+    private Expr Expression()
+    {
+        return Equality();
+    }
+
+    // equality -> comparison ( ( "!=" | "==" ) comparison )* ;
+    private Expr Equality()
+    {
+        Expr expr = Comparison();
+
+        while (Match(BANG_EQUAL, EQUAL_EQUAL))
+        {
+            Token opr = Previous();
+            Expr right = Comparison();
+            expr = new Expr.Binary(expr, opr, right);
+        }
+
+        return expr;
+    }
+
+    // comparison -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+    private Expr Comparison()
+    {
+        Expr expr = Term();
+
+        while (Match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL))
+        {
+            Token opr = Previous();
+            Expr right = Term();
+            expr = new Expr.Binary(expr, opr, right);
+        }
+
+        return expr;
+    }
+
+    // term       -> factor ( ( "-" | "+" ) factor )* ;
+    private Expr Term()
+    {
+        Expr expr = Factor();
+
+        while (Match(MINUS, PLUS))
+        {
+            Token opr = Previous();
+            Expr right = Factor();
+            expr = new Expr.Binary(expr, opr, right);
+        }
+
+        return expr;
+    }
+
+    // factor     -> unary ( ( "/" | "*" ) unary )* ;
+    private Expr Factor()
+    {
+        Expr expr = Unary();
+
+        while (Match(SLASH, STAR))
+        {
+            Token opr = Previous();
+            Expr right = Unary();
+            expr = new Expr.Binary(expr, opr, right);
+        }
+
+        return expr;
+    }
+
+    private Expr Unary()
+    {
+        if (Match(BANG, MINUS))
+        {
+            Token opr = Previous();
+            Expr right = Unary();
+            return new Expr.Unary(opr, right);
+        }
+
+        return Primary();
+    }
+
+    private Expr Primary()
+    {
+        if (Match(FALSE))
+            return new Expr.Literal(false);
+        if (Match(TRUE))
+            return new Expr.Literal(true);
+        if (Match(NIL))
+            return new Expr.Literal(null);
+        if (Match(NUMBER, STRING))
+        {
+            return new Expr.Literal(Previous().Literal);
+        }
+        if (Match(LEFT_PAREN))
+        {
+            Expr expr = Expression();
+            Consume(RIGHT_PAREN, "Expect ')' after expression.");
+            return new Expr.Grouping(expr);
+        }
+
+        throw new Exception();
+    }
+
+    private bool Match(params TokenType[] tokens)
+    {
+        foreach (var tt in tokens)
+        {
+            if (Check(tt))
+            {
+                Advance();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool Check(TokenType tt)
+    {
+        if (IsAtEnd())
+            return false;
+        return Peek().Type == tt;
+    }
+
+    private Token Advance()
+    {
+        if (IsAtEnd())
+            _current++;
+        return Previous();
+    }
+
+    private bool IsAtEnd() => Peek().Type == EOF;
+
+    private Token Peek() => _tokens[_current];
+
+    private Token Previous() => _tokens[_current - 1];
+}
