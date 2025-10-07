@@ -1,4 +1,6 @@
-﻿namespace cslox;
+﻿using System.Security;
+
+namespace cslox;
 
 public class Lox
 {
@@ -45,7 +47,7 @@ public class Lox
 
     public static void RunFile(string path)
     {
-        byte[] bytes = File.ReadAllBytes(path);
+        var bytes = File.ReadAllBytes(path);
         Run(System.Text.Encoding.Default.GetString(bytes));
         if (hadError)
             Environment.Exit(65);
@@ -53,18 +55,25 @@ public class Lox
 
     public static void Run(string source)
     {
-        Scanner scanner = new Scanner(source);
+        var scanner = new Scanner(source);
         List<Token> tokens = scanner.ScanTokens();
 
+        var parser = new Parser(tokens);
+        var expression = parser.Parse();
+
+        if (hadError)
+            return;
+
+        Console.WriteLine(new AstPrinter().Print(expression));
         foreach (var token in tokens)
         {
             Console.WriteLine(token);
         }
     }
 
-    public static void Error(int line, string message)
+    public static void Error(Token token, string message)
     {
-        Report(line, "", message);
+        Report(token.Line, "", message);
     }
 
     private static void Report(int line, string where, string message)

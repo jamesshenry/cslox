@@ -14,6 +14,18 @@ public class Parser
         _tokens = tokens;
     }
 
+    public Expr Parse()
+    {
+        try
+        {
+            return Expression();
+        }
+        catch (ParseException ex)
+        {
+            return null!;
+        }
+    }
+
     // expression -> equality;
     private Expr Expression()
     {
@@ -111,7 +123,20 @@ public class Parser
             return new Expr.Grouping(expr);
         }
 
-        throw new Exception();
+        throw Error(Peek(), "Expected expression.");
+    }
+
+    private Token Consume(TokenType type, string message)
+    {
+        if (Check(type))
+            return Advance();
+        throw Error(Peek(), message);
+    }
+
+    private Exception Error(Token token, string message)
+    {
+        Lox.Error(token, message);
+        return new ParseException();
     }
 
     private bool Match(params TokenType[] tokens)
@@ -141,9 +166,37 @@ public class Parser
         return Previous();
     }
 
+    private void Synchronize()
+    {
+        Advance();
+
+        while (!IsAtEnd())
+        {
+            if (Previous().Type == SEMICOLON)
+                return;
+
+            switch (Peek().Type)
+            {
+                case CLASS:
+                case FUN:
+                case VAR:
+                case FOR:
+                case IF:
+                case WHILE:
+                case PRINT:
+                case RETURN:
+                    return;
+            }
+
+            Advance();
+        }
+    }
+
     private bool IsAtEnd() => Peek().Type == EOF;
 
     private Token Peek() => _tokens[_current];
 
     private Token Previous() => _tokens[_current - 1];
+
+    private class ParseException : Exception { }
 }
