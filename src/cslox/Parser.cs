@@ -161,7 +161,7 @@ public class Parser
 
     private Token Advance()
     {
-        if (IsAtEnd())
+        if (!IsAtEnd())
             _current++;
         return Previous();
     }
@@ -196,7 +196,7 @@ public class Parser
 
     private Token Peek() => _tokens[_current];
 
-    private Token Previous() => _tokens[_current - 1];
+    private Token Previous() => _tokens.ElementAt(_current - 1);
 
     private class ParseException : Exception { }
 }

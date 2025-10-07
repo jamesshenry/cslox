@@ -8,26 +8,19 @@ public class Lox
 
     static void Main(string[] args)
     {
-        // if (args.Length > 1)
-        // {
-        //     Console.WriteLine("Usage: cslox [script]");
-        //     Environment.Exit(64);
-        // }
-        // else if (args.Length == 1)
-        // {
-        //     RunFile(args[0]);
-        // }
-        // else
-        // {
-        //     RunPrompt();
-        // }
-        Expr expression = new Expr.Binary(
-            new Expr.Unary(new Token(TokenType.MINUS, "-", null, 1), new Expr.Literal(123)),
-            new Token(TokenType.STAR, "*", null, 1),
-            new Expr.Grouping(new Expr.Literal("str"))
-        );
-
-        Console.WriteLine(new RpnPrinter().Print(expression));
+        if (args.Length > 1)
+        {
+            Console.WriteLine("Usage: cslox [script]");
+            Environment.Exit(64);
+        }
+        else if (args.Length == 1)
+        {
+            RunFile(args[0]);
+        }
+        else
+        {
+            RunPrompt();
+        }
     }
 
     public static void RunPrompt()
@@ -65,15 +58,16 @@ public class Lox
             return;
 
         Console.WriteLine(new AstPrinter().Print(expression));
-        foreach (var token in tokens)
-        {
-            Console.WriteLine(token);
-        }
     }
 
     public static void Error(Token token, string message)
     {
-        Report(token.Line, "", message);
+        Report(token.Line, token.Lexeme, message);
+    }
+
+    internal static void Error(int line, string message)
+    {
+        Report(line, "", message);
     }
 
     private static void Report(int line, string where, string message)
