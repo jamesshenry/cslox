@@ -22,17 +22,18 @@ operator   -> "==" | "!=" | "<" | "<=" | ">" | ">="
 ```
 
 ```text
-expression -> equality ;
-equality   -> comparison ( ( "!=" | "==" ) comparison )* ;
+expression -> comma ;
+comma      -> ternary ( "," ternary )* ;
+ternary    -> equality ( "?" equality ":" ternary )? ;
+equality   -> comparison ( ( "!=" | "==" ) comparison )* ;
 comparison -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
-term       -> factor ( ( "-" | "+" ) factor )* ;
-factor     -> unary ( ( "/" | "*" ) unary )* ;
-unary      -> ( "!" | "-" ) unary
-            | primary;
-primary    -> NUMBER
-            | STRING
-            | "true"
-            | "false"
-            | "nil"
-            | "(" expression ")" ;
-```
+term       -> factor ( ( "-" | "+" ) factor )* ;
+factor     -> unary ( ( "/" | "*" ) unary )* ;
+unary      -> ( "!" | "-" ) unary
+            | primary;
+primary    -> NUMBER
+            | STRING
+            | "true"
+            | "false"
+            | "nil"
+            | "(" expression ")" ;

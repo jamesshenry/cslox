@@ -26,10 +26,25 @@ public class Parser
         }
     }
 
-    // expression -> equality;
+    // expression -> comma;
     private Expr Expression()
     {
-        return Equality();
+        return Comma();
+    }
+
+    // comma      -> equality ( "," equality ) * ;
+    private Expr Comma()
+    {
+        Expr expr = Equality();
+
+        while (Match(COMMA))
+        {
+            Token opr = Previous();
+            Expr right = Equality();
+            expr = new Expr.Binary(expr, opr, right);
+        }
+
+        return expr;
     }
 
     // equality -> comparison ( ( "!=" | "==" ) comparison )* ;
