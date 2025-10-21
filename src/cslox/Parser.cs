@@ -1,5 +1,3 @@
-using System.Linq.Expressions;
-using System.Text.RegularExpressions;
 using static cslox.TokenType;
 
 namespace cslox;
@@ -136,6 +134,32 @@ public class Parser
             Expr expr = Expression();
             Consume(RIGHT_PAREN, "Expect ')' after expression.");
             return new Expr.Grouping(expr);
+        }
+        if (Match(BANG_EQUAL, EQUAL_EQUAL))
+        {
+            Error(Previous(), "Expected left hand operand");
+            _ = Equality();
+            return null!;
+        }
+
+        if (Match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL))
+        {
+            Error(Previous(), "Expected left hand operand");
+            _ = Comparison();
+            return null!;
+        }
+
+        if (Match(PLUS))
+        {
+            Error(Previous(), "Expected left hand operand");
+            _ = Term();
+            return null!;
+        }
+        if (Match(SLASH, STAR))
+        {
+            Error(Previous(), "Expected left hand operand");
+            _ = Factor();
+            return null!;
         }
 
         throw Error(Peek(), "Expected expression.");
